@@ -85,13 +85,17 @@ async def send_user(user_id, message, markup=None):
 
 
 # Рассылка сообщения всем администраторам
-async def send_admins(message, markup=None, not_me=0):
+async def send_admins(message, user_message=None, markup=None, not_me=0):
     for admin in get_admins():
         if markup == "default":
-            lang=get_userx(user_id=admin)['user_lang']
-            if lang is None:
-                lang = "ru"
-            print(lang)
+            # Если user_message передан, определяем язык на основе его настроек
+            if user_message:
+                lang = user_message.from_user.language_code
+            else:
+                lang = get_userx(user_id=admin)['user_lang']
+                if lang is None:
+                    lang = "ru"  # стандартный язык, если язык не определен
+            
             markup = menu_frep(admin, lang)
 
         try:
@@ -99,6 +103,7 @@ async def send_admins(message, markup=None, not_me=0):
                 await bot.send_message(admin, message, reply_markup=markup, disable_web_page_preview=True)
         except Exception:
             pass
+
 
 # Автоматическая очистка ежедневной статистики после 00:00
 async def update_profit_day():
