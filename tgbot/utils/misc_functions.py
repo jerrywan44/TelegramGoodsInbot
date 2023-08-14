@@ -1285,4 +1285,3 @@ def get_shop_admin(shop_id):
                   f"📜 Описание: {text_description}"
 
     return get_message, get_photo
-
